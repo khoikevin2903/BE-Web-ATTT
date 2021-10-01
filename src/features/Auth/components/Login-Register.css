@@ -1,0 +1,42 @@
+.auth-form {
+    background: #fff;
+    border: rgba(235, 233, 231, 0.644) 1px solid;
+    border-radius: 7px;
+}
+
+.auth-form p {
+    color: #504e4e;
+}
+
+.auth-form input[type=text], input[type=password] {
+    background: #fff;
+    border: #ddd 1px solid;
+    border-radius: 7px;
+    height: 38px;
+    width: 100%;
+    margin-top: 5px;
+    padding: 0 15px;
+    color: #555555;
+    box-shadow: 0 0 4px #ddd;
+    transition-duration: 300ms;
+}
+
+.auth-form input[type=text]:focus, input[type=password]:focus {
+    box-shadow: 0px 0px 8px #ddd;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    outline: none;
+}
+
+.other-login {
+    text-align: center;
+    border-bottom: 2px solid rgb(231, 229, 229);
+    line-height: 0.1em;
+    margin: 10px 0 20px;
+}
+
+.other-login span {
+    color: gray;
+    background: #fff;
+    padding: 0 7px;
+}
