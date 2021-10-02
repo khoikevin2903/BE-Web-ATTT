@@ -8,16 +8,6 @@ import { useHistory } from 'react-router';
 
 function FormLogin(props) {
 
-    // const submitForm = (e) => {
-    //     var token;
-    //     e.preventDefault();
-
-    //     axios.post('http://localhost:4000/auth/refresh-token', {
-    //         refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjYxNGZkNzQ4OGRmYjIwMTY0YjhmZWY3ZSIsInVzZXJuYW1lIjoia2hvaWtldmluIiwicGFzc3dvcmQiOiIxMjM0NTYifSwiaWF0IjoxNjMyNjQzOTY1LCJleHAiOjE2MzI3MzAzNjV9.ibByON3EadXl5OqYP0QT5l5-DM-nm5oe53JDW-cs-Z8'
-    //     }).then(res => console.log(res))
-    //         .catch(err => console.log(err))
-    // }
-
     const { register, handleSubmit } = useForm();
 
     const [mess, setMess] = useState();
@@ -45,7 +35,7 @@ function FormLogin(props) {
 
     return (
 
-        <div className="flex justify-center items-center container-xl bg-gray-50">
+        <div className="flex justify-center items-center container-xl bg-gray-50 mt-2">
             <div className="mt-4 w-1/3 px-12">
                 <img className="h-12 mx-auto w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" />
 

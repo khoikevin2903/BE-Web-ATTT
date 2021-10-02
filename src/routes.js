@@ -6,11 +6,6 @@ import UserManagement from './Admin/UserManagement/UserManagement';
 
 export const ROUTES = [
     {
-        path: "/",
-        exact: true,
-        main: Home
-    },
-    {
         path: "/signup",
         exact: true,
         main: SignUp
@@ -23,6 +18,11 @@ export const ROUTES = [
 ]
 
 export const PRIVATE_ROUTES = [
+    {
+        path: "/",
+        exact: true,
+        main: Home
+    },
     {
         path: "/account-setting",
         exact: true,

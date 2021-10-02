@@ -24,6 +24,7 @@ function Header(props) {
             accessToken: accessToken
         }).then(res => {
             dispatch(onLogout(res.data));
+            history.push('/login');
         }).catch(err => console.log(err))
     }
 
