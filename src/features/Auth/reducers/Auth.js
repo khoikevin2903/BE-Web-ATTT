@@ -3,31 +3,21 @@ import { createSlice } from '@reduxjs/toolkit';
 const login = createSlice({
     name: 'login',
     initialState: {
-        info: {
-            _id: "",
-            firstName: "",
-            lastName: "",
-            role: 0
-        },
-        accessToken: "",
-        refreshToken: ""
-
+        info: {},
+        accessToken: ""
     },
     reducers: {
         onLogout: () => {
             return {
-                info: {
-                    _id: "",
-                    firstName: "",
-                    lastName: ""
-                },
-                accessToken: "",
-                refreshToken: ""
+                info: {},
+                accessToken: ""
             }
         },
         onLogin: (state, action) => {
-            console.log(action.payload)
-            return action.payload;
+            return {
+                info: action.payload.info,
+                accessToken: action.payload.accessToken
+            }
         }
     }
 });

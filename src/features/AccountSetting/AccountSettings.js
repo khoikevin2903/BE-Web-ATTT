@@ -3,8 +3,11 @@ import ChangePassword from './components/ChangePassword';
 import EditProfile from './components/EditProfile';
 
 function AccountSettings(props) {
+
+   
+
     return (
-        <div className="bg-gray-50 max-w-7xl mx-auto px-24">
+        <div className="bg-gray-50 max-w-7xl mx-auto px-24 mt-10">
             <div className="flex items-center p-4 mx-12 bg-white mt-4 rounded shadow-md font-medium text-xl">
                 <span>Account Setting</span>
             </div>

@@ -7,10 +7,12 @@ import storage from 'redux-persist/lib/storage';
 import thunk from "redux-thunk";
 import persistStore from 'redux-persist/es/persistStore';
 import Auth from '../features/Auth/reducers/Auth';
+import ListMusic from '../features/Home/reducers/ListMusic';
 
 
 const rootReducer = combineReducers({
     Auth: Auth,
+    ListMusic:ListMusic,
 });
 
 const persistConfig = {

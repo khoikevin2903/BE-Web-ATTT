@@ -3,10 +3,13 @@ import { Dialog, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import {FetchList} from '../reducers/ListMusic';
 
 function DialogCreate(props) {
 
     const { isOpen, closeModal } = props;
+
+    const token = useSelector(state => state.Auth.accessToken);
 
     const { register, handleSubmit, reset } = useForm();
 
@@ -29,7 +32,11 @@ function DialogCreate(props) {
                 Authorization: `Bearer ${accessToken}`
             }
         })
-            .then(() => CloseModal())
+            .then(res => {
+                dispatch(FetchList(token))
+                CloseModal();
+
+            })
             .catch(console)
     }
 

@@ -5,14 +5,27 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { onLogin } from '../reducers/Auth';
 import { useHistory } from 'react-router';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
+import jwt_decode from 'jwt-decode';
+
 
 function FormLogin(props) {
 
-    const { register, handleSubmit } = useForm();
+    const schema = yup.object().shape({
+        username: yup.string().required().max(15),
+        password: yup.string().required().max(32).min(6),
+    }).required();
+
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(schema),
+    });
 
     const [mess, setMess] = useState();
 
     const [err, setErr] = useState(true);
+
+    const [showPass, setShowPass] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -23,20 +36,20 @@ function FormLogin(props) {
             username: data.username,
             password: data.password
         }).then(res => {
-            if (res.data.err) {
-                setMess(res.data.err);
-                setErr(false);
-            } else {
-                dispatch(onLogin(res.data));
-                history.push('/');
-            }
+            const info = jwt_decode(res.data.accessToken).data;
+            console.log(info)
+            dispatch(onLogin({
+                info: info,
+                accessToken: res.data.accessToken
+            }))
+            history.push('/');
         }).catch(err => console.log(err))
     }
 
     return (
 
-        <div className="flex justify-center items-center container-xl bg-gray-50 mt-2">
-            <div className="mt-4 w-1/3 px-12">
+        <div className="grid grid-cols-1 bg-gray-50 mt-2">
+            <div className="mt-4 container-form">
                 <img className="h-12 mx-auto w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" />
 
                 <h1 className="text-3xl text-center font-bold mt-2">Sign in to your account</h1>
@@ -44,43 +57,41 @@ function FormLogin(props) {
 
                 <form className="mt-4 p-8 auth-form shadow-md" onSubmit={handleSubmit(submitFormLogin)} >
                     <div>
-                        <p className="font-medium">Username</p>
-                        <input className="focus:ring-indigo-500 focus:border focus:border-indigo-500 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                        <label htmlFor="username" className="font-medium">Username</label>
+                        <input
+                            className="text"
                             type="text"
-                            {...register("username", { onChange: () => setErr(true) }, { required: true })}
+                            id="username"
+                            {...register("username")}
                         />
+                        {errors.username && <p className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{errors.username.message}</p>}
                     </div>
 
                     <div className="mt-6">
-                        <p className="font-medium">Password</p>
-                        <input className="mb-1 focus:ring-indigo-500 focus:border focus:border-indigo-500 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
-                            type="password"
-                            {...register("password", { onChange: () => setErr(true) }, { required: true })}
-                        />
-                        {!err && <span className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{mess}</span>}
+                        <label htmlFor="password" className="font-medium">Password</label>
+                        <div className="password flex items-center">
+                            <input
+                                className="w-full focus:outline-none focus:border-none"
+                                id="password"
+                                type={`${showPass ? 'text' : 'password'}`}
+                                {...register("password")}
+                            />
+                            <i className={`far fa-eye cursor-pointer duration-300 ${showPass ? 'text-blue-500' : 'text-gray-400  hover:text-gray-600'}`}
+                                onClick={() => setShowPass(!showPass)}
+                            ></i>
+                        </div>
+                        {errors.password && <p className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{errors.password.message}</p>}
                     </div>
 
-                    <div className="flex items-center my-4">
-                        <div className="flex items-center">
-                            <input name="remember-me" type="checkbox" className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
+                    {err && <p className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{mess}</p>}
 
-                            <span className="ml-2 block text-sm font-medium text-gray-400">
-                                Remember me
-                            </span>
-                        </div>
-
-                        <div className="text-sm ml-auto my-6">
-                            <span className="cursor-pointer font-medium text-indigo-600 hover:text-indigo-500">
-                                Forgot your password?
-                            </span>
-                        </div>
-                    </div>
-
-                    <button className="text-white bg-indigo-600 text-center w-full py-2 border border-gray-300 rounded-md"
+                    <button
+                        className="btn-login mt-6"
                         type="submit"
                     >
                         Sign in
                     </button>
+
 
                     <div className="my-6">
                         <div className="other-login">
@@ -101,6 +112,7 @@ function FormLogin(props) {
                             <i className="fab fa-github text-xl text-gray-500"></i>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>

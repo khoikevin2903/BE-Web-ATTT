@@ -19,8 +19,8 @@ function FormRegister(props) {
     }
 
     return (
-        <div className="flex justify-center items-center container-xl bg-gray-50" >
-            <div className="mt-4 w-1/3 px-12">
+        <div className="grid grid-cols-1 bg-gray-50 mt-2" >
+            <div className="mt-4 container-form">
                 <img className="h-12 mx-auto w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" />
 
                 <h1 className="text-3xl text-center font-bold mt-2">Register Account</h1>

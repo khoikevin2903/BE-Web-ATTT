@@ -3,15 +3,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { onLogout } from '../../features/Auth/reducers/Auth';
 import axios from 'axios'
 import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom'
+
 function Header(props) {
 
-    const firstName = useSelector(auth => auth.Auth.info.firstName);
+    const firstName = useSelector(auth => auth.Auth.info ? auth.Auth.info.firstName : "");
 
-    const lastName = useSelector(auth => auth.Auth.info.lastName);
+    const lastName = useSelector(auth => auth.Auth.info ? auth.Auth.info.lastName : "");
 
     const accessToken = useSelector(auth => auth.Auth.accessToken);
 
-    const role = useSelector(auth => auth.Auth.info.role);
+    const role = useSelector(auth => auth.Auth.info ? auth.Auth.info.role : "");
 
     const history = useHistory();
 
@@ -20,10 +22,11 @@ function Header(props) {
     const [dropdownUser, setDropdownUser] = useState(false);
 
     const Logout = () => {
+        setDropdownUser(false);
         axios.post('http://localhost:4000/auth/logout', {
             accessToken: accessToken
         }).then(res => {
-            dispatch(onLogout(res.data));
+            dispatch(onLogout());
             history.push('/login');
         }).catch(err => console.log(err))
     }
@@ -38,14 +41,14 @@ function Header(props) {
                         alt="Workflow"
                         onClick={() => history.push('/')}
                     />
-                    {firstName === "" ?
+                    {(firstName === "" || typeof firstName === "undefined") ?
                         <div className="flex items-center ml-auto">
-                            <a href="/login" className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">
+                            <Link to="/login" className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">
                                 Sign in
-                            </a>
-                            <a href="/signup" className="ml-8 animate-pulse whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            </Link>
+                            <Link to="/signup" className="ml-8 animate-pulse whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
                                 Sign up
-                            </a>
+                            </Link>
                         </div> :
 
                         <div className="relative inline-block text-left ml-auto">
@@ -60,17 +63,30 @@ function Header(props) {
 
                             {dropdownUser && <div className="z-10 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                                 <div className="divide-y divide-fuchsia-300" role="none">
-                                    <a href="/account-setting" className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 transition duration-300 ease-in-out">Account settings</a>
+                                    <Link
+                                        to="/account-setting"
+                                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 transition duration-300 ease-in-out"
+                                        onClick={() => setDropdownUser(false)}
+                                    >
+                                        <i className="fas fa-user-cog w-1/5"></i>
+                                        <span>Account setting</span>
+                                    </Link>
                                     {
-                                        role === 3 &&
-                                        <a href="/admin/user-management" className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 transition duration-300 ease-in-out">User management</a>
+                                        role !== "USER" &&
+                                        <Link
+                                            to={`/${role.toLowerCase()}/user-management`}
+                                            className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 transition duration-300 ease-in-out"
+                                            onClick={() => setDropdownUser(false)}
+                                        >
+                                            <i className="fas fa-users-cog w-1/5"></i>
+                                            <span>User management</span>
+                                        </Link>
                                     }
-                                    <a href="/" className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 transition duration-300 ease-in-out">Support</a>
-                                    <a href="/" className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 transition duration-300 ease-in-out">License</a>
                                     <button className="text-gray-700 w-full rounded-b-md text-left px-4 py-2 text-sm hover:bg-gray-100 transition duration-300 ease-in-out"
                                         onClick={Logout}
                                     >
-                                        Sign out
+                                        <i class="fas fa-sign-out-alt w-1/5"></i>
+                                        <span>Sign out</span>
                                     </button>
                                 </div>
                             </div>}
