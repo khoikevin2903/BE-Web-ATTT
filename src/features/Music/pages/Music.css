@@ -33,7 +33,7 @@
 }
 
 .images {
-  margin-top: 15px;
+  margin-top: 12px;
   display: flex;
   grid-gap: 36px;
   /* grid-template-columns: repeat(auto-fit, minmax(293px, 1fr)); */

@@ -59,3 +59,11 @@
     border-radius: 7px;
     outline: none;
 } */
+
+.option-setting {
+    display: none;
+}
+
+.music:hover .option-setting {
+    display: block;
+}

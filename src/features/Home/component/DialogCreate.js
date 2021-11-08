@@ -1,21 +1,39 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import {FetchList} from '../reducers/ListMusic';
+import { FetchList } from '../reducers/ListMusic';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
 
 function DialogCreate(props) {
 
-    const { isOpen, closeModal } = props;
+    const { isOpen, closeModal, music } = props;
+
+    const schema = yup.object().shape({
+        name: yup.string().required(),
+        author: yup.string().required(),
+        description: yup.string(),
+        videoId: yup.string().required(),
+        genre: yup.string(),
+    }).required();
+
+    const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
+        resolver: yupResolver(schema),
+    });
+
+    useEffect(() => {
+        if (typeof music !== "undefined") {
+            setValue("name", music.name);
+            setValue("author", music.author);
+            setValue("description", music.description);
+            setValue("videoId", music.videoId);
+            setValue("genre", music.genre)
+        }
+    }, [music, setValue])
 
     const token = useSelector(state => state.Auth.accessToken);
-
-    const { register, handleSubmit, reset } = useForm();
-
-    const [mess, setMess] = useState();
-
-    const [err, setErr] = useState(true);
 
     const accessToken = useSelector(auth => auth.Auth.accessToken);
 
@@ -27,17 +45,29 @@ function DialogCreate(props) {
     }
 
     const submitFormLogin = (data) => {
-        axios.post('http://localhost:4000/musics/create', data, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-            .then(res => {
+        if (typeof music !== "undefined") {
+            axios.put(`http://localhost:4000/musics/${music._id}`, data, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }).then(res => {
                 dispatch(FetchList(token))
                 CloseModal();
 
             })
-            .catch(console)
+                .catch(console)
+        } else {
+            axios.post('http://localhost:4000/musics/create', data, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }).then(res => {
+                dispatch(FetchList(token))
+                CloseModal();
+
+            })
+                .catch(console)
+        }
     }
 
     return (
@@ -112,50 +142,55 @@ function DialogCreate(props) {
                                                 <div className="mt-6">
                                                     <p className="font-medium">Name of the song</p>
                                                     <input className="focus:ring-indigo-500 focus:border focus:border-indigo-500 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                                        // value={typeof music !== "undefined" ? music.name : ""}
                                                         placeholder="Enter the name of the song"
                                                         type="text"
-                                                        {...register("name", { onChange: () => setErr(true) }, { required: true })}
+                                                        {...register("name")}
                                                     />
+                                                    {errors.name && <span className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{errors.name.message}</span>}
                                                 </div>
 
                                                 <div className="mt-6">
                                                     <p className="font-medium">Author</p>
                                                     <input className="mb-1 focus:ring-indigo-500 focus:border focus:border-indigo-500 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                                        // value={typeof music !== "undefined" ? music.author : ""}
                                                         placeholder="Enter author's name"
                                                         type="text"
-                                                        {...register("author", { onChange: () => setErr(true) }, { required: true })}
+                                                        {...register("author")}
                                                     />
-                                                    {!err && <span className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{mess}</span>}
+                                                    {errors.author && <span className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{errors.author.message}</span>}
                                                 </div>
 
                                                 <div className="mt-6">
                                                     <p className="font-medium">Song description</p>
                                                     <input className="mb-1 focus:ring-indigo-500 focus:border focus:border-indigo-500 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                                        // value={typeof music !== "undefined" ? music.description : ""}
                                                         placeholder="Enter song description"
                                                         type="text"
-                                                        {...register("description", { onChange: () => setErr(true) }, { required: true })}
+                                                        {...register("description")}
                                                     />
-                                                    {!err && <span className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{mess}</span>}
                                                 </div>
 
                                                 <div className="mt-6">
                                                     <p className="font-medium">Video ID</p>
                                                     <input className="mb-1 focus:ring-indigo-500 focus:border focus:border-indigo-500 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                                        // value={typeof music !== "undefined" ? music.videoId : ""}
                                                         placeholder="Enter Video ID"
                                                         type="text"
-                                                        {...register("videoId", { onChange: () => setErr(true) }, { required: true })}
+                                                        {...register("videoId")}
                                                     />
-                                                    {!err && <span className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{mess}</span>}
+                                                    {errors.videoId && <span className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{errors.videoId.message}</span>}
                                                 </div>
 
                                                 <div className="mt-6">
                                                     <p className="font-medium">Music genre</p>
                                                     <input className="mb-1 focus:ring-indigo-500 focus:border focus:border-indigo-500 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                                        // value={typeof music !== "undefined" ? music.genre : ""}
                                                         placeholder="Enter song genre"
                                                         type="text"
-                                                        {...register("genre", { onChange: () => setErr(true) }, { required: true })}
+                                                        {...register("genre")}
                                                     />
-                                                    {!err && <span className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{mess}</span>}
+                                                    {errors.genre && <span className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{errors.genre.message}</span>}
                                                 </div>
 
                                                 <div className="mt-6 flex items-center justify-end">
@@ -170,7 +205,7 @@ function DialogCreate(props) {
                                                         type="submit"
                                                         className="justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                                                     >
-                                                        Create Music
+                                                        {typeof music !== "undefined" ? "Save" : "Create Music"}
                                                     </button>
                                                 </div>
                                             </form>

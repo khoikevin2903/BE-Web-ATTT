@@ -37,13 +37,17 @@ function FormLogin(props) {
             password: data.password
         }).then(res => {
             const info = jwt_decode(res.data.accessToken).data;
-            console.log(info)
             dispatch(onLogin({
                 info: info,
                 accessToken: res.data.accessToken
             }))
             history.push('/');
-        }).catch(err => console.log(err))
+        }).catch(err => {
+            if (err.response) {
+                setMess(err.response.data.err);
+                setErr(true);
+            }
+        })
     }
 
     return (
@@ -62,7 +66,7 @@ function FormLogin(props) {
                             className="text"
                             type="text"
                             id="username"
-                            {...register("username")}
+                            {...register("username", { onChange: () => setErr(false) })}
                         />
                         {errors.username && <p className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{errors.username.message}</p>}
                     </div>
@@ -74,7 +78,7 @@ function FormLogin(props) {
                                 className="w-full focus:outline-none focus:border-none"
                                 id="password"
                                 type={`${showPass ? 'text' : 'password'}`}
-                                {...register("password")}
+                                {...register("password", { onChange: () => setErr(false) })}
                             />
                             <i className={`far fa-eye cursor-pointer duration-300 ${showPass ? 'text-blue-500' : 'text-gray-400  hover:text-gray-600'}`}
                                 onClick={() => setShowPass(!showPass)}
@@ -83,7 +87,7 @@ function FormLogin(props) {
                         {errors.password && <p className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{errors.password.message}</p>}
                     </div>
 
-                    {err && <p className="text-sm text-red-600 ml-2 tracking-tighter font-semibold">{mess}</p>}
+                    {err && <span className="text-sm text-red-600 ml-2 mt-1 tracking-tighter font-semibold">{mess}</span>}
 
                     <button
                         className="btn-login mt-6"

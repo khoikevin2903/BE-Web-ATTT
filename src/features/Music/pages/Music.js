@@ -42,7 +42,7 @@ function Music(props) {
     }
 
     useEffect(() => {
-      setListMusic(ListMusic)  
+        setListMusic(ListMusic)
     }, [ListMusic])
 
     useEffect(() => {
@@ -90,7 +90,7 @@ function Music(props) {
                             </iframe>
                             {
                                 typeof music !== "undefined" &&
-                                <p className="mt-2 font-medium text-xl">{music.name} - {music.author}</p>
+                                <p className="font-medium text-lg">{music.name} - {music.author}</p>
                             }
                         </div>
                     </div>

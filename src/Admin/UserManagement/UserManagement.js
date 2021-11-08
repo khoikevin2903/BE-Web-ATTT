@@ -1,30 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import swal from 'sweetalert'
+import { FetchList } from '../reducers/ListUser';
 
 function UserManagement(props) {
 
+    const dispatch = useDispatch();
+
+    const ListUser = useSelector(state => state.ListUser);
+
     const token = useSelector(state => state.Auth.accessToken);
 
-    const [listUser, setListUSer] = useState([])
+    const [listUser, setListUSer] = useState(ListUser);
+
+    console.log(ListUser);
+    useEffect(() => {
+        dispatch(FetchList(token));
+    }, [dispatch, token])
 
     useEffect(() => {
-        axios.get('http://localhost:4000/me/user-management',
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+        setListUSer(ListUser)
+    }, [ListUser])
+
+
+    const ChangeBlockUser = (item) => {
+        const newItem = { ...item, isBlock: !item.isBlock }
+        swal({
+            title: "Are you sure?",
+            text: `${!item.isBlock ? 'Once block, If this account is locked, the user of this account cannot log in!' : 'If this account is unlocked, users of this account can login normally!'}`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    axios.put(`http://localhost:4000/me/${item._id}/block`, newItem, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }).then(() => {
+                        dispatch(FetchList(token));
+                        swal(`${!item.isBlock ? 'Poof! This account has been locked!' : 'Poof! This account has been unlocked!'}`, {
+                            icon: "success",
+                        });
+                    }).catch(err => console.log(err))
                 }
-            }
-        )
-            .then(res => setListUSer(res.data))
-            .catch(err => console.log(err))
-    }, [token])
+            });
+    }
 
     const convertListUser = (list) => {
         if (list.length > 0) {
             const result = list.map((item, index) => {
                 return (
-                    <tr key={index}>
+                    <tr key={index} className="hover:bg-gray-50 transition duration-300 ease-in-out">
                         <td className="px-6 py-4 whitespace-nowrap">
                             <div className="">
                                 <div>
@@ -45,8 +74,11 @@ function UserManagement(props) {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {item.role}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="/" className="text-indigo-600 hover:text-indigo-900">Edit</a>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm ">
+                            <i className={`fas fa-user-lock cursor-pointer ${item.isBlock ? 'text-gray-700' : 'text-gray-400'}`}
+                                title={`${item.isBlock ? 'Unblock' : 'Block'}`}
+                                onClick={() => ChangeBlockUser(item)}
+                            ></i>
                         </td>
                     </tr>
                 )
@@ -81,7 +113,7 @@ function UserManagement(props) {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                               {convertListUser(listUser)}
+                                {convertListUser(listUser)}
                             </tbody>
                         </table>
                     </div>
