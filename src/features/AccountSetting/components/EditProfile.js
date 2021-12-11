@@ -36,7 +36,7 @@ function EditProfile(props) {
             }
         })
             .then(res => {
-                swal("Thay đổi thông tin thành công!","Nhấn ok để trở lại!", "success");
+                swal("Successfully changed information!"," Click ok to go back!", "success");
                 const info = jwt_decode(res.data.accessToken).data;
                 console.log(info)
                 dispatch(onLogin({

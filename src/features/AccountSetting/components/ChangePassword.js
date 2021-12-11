@@ -40,7 +40,7 @@ function ChangePassword(props) {
                 }
             })
                 .then(() => {
-                    swal("Thay đổi mật khẩu thành công!", "Nhấn ok để trở lại!", "success");
+                    swal("Password change successful!", "Click ok to go back!", "success");
                     reset();
                 })
                 .catch(err => {

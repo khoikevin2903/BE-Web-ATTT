@@ -3,6 +3,7 @@ import './Login-Register.css'
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import axios from 'axios';
+import swal from 'sweetalert'
 
 function FormRegister(props) {
 
@@ -14,6 +15,7 @@ function FormRegister(props) {
         axios.post('http://localhost:4000/auth/sign-up', {
             ...data
         }).then(() => {
+            swal("Account successfully created!", "Click ok to continue!", "success");
             history.push('/login');
         }).catch(err => console.log(err))
     }

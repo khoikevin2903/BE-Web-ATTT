@@ -6,6 +6,7 @@ import axios from 'axios';
 import { FetchList } from '../reducers/ListMusic';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import swal from 'sweetalert'
 
 function DialogCreate(props) {
 
@@ -51,6 +52,7 @@ function DialogCreate(props) {
                     Authorization: `Bearer ${accessToken}`
                 }
             }).then(res => {
+                swal("Successful song editing!", "Click ok to go back!", "success");
                 dispatch(FetchList(token))
                 CloseModal();
 
@@ -62,6 +64,7 @@ function DialogCreate(props) {
                     Authorization: `Bearer ${accessToken}`
                 }
             }).then(res => {
+                swal("Successful new song creation!", "Click ok to go back!", "success");
                 dispatch(FetchList(token))
                 CloseModal();
 
